@@ -1,0 +1,150 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: zouyao
+  Date: 2017/3/6
+  Time: 18:51
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<script>
+    var addPlayCtrl = m.controller("addPlaycontroller",function ($rootScope,$scope) {
+        $rootScope.ap_init = function () {
+            $scope.add_playgroundName = "";
+            $scope.add_size = "";
+            $scope.add_price = "";
+            $scope.add_position = "";
+            $scope.add_description = "";
+        };
+
+        $scope.addToPlayground = function(){
+            $.ajax({
+                type: "POST",
+                url: "/playground/addToPlayground",
+                data: {
+                    "playgroundName": $scope.add_playgroundName,
+                    "size": $scope.add_size,
+                    "price": $scope.add_price,
+                    "position": $scope.add_position,
+                    "isFree":'是',
+                    "description": $scope.add_description
+                },
+                contentType: "application/x-www-form-urlencoded",
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    $scope.$apply(function(){
+                        $rootScope.justForModalInfomation = "新增场地成功!";
+                        $("#modalid-toastInfo").modal("toggle");
+                    });
+                }
+            });
+        };
+
+    });
+</script>
+<%--新增场地--%>
+<div ng-controller="addPlaycontroller">
+    <div class="col-xs-10" style="background-color: #f7f7f7;" id="">
+        <caption>
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand">新增场地</a>
+                        <%--<div class="navbar-form navbar-left">
+                            <button type="button" class="btn btn-primary" ng-click="addOneBulletinModal()">
+                                <span class="glyphicon glyphicon-plus"></span>&nbsp;<span>新增设施</span>
+                            </button>
+                        </div>--%>
+                    </div>
+                    <%--<div class="btn-group navbar-form navbar-right">
+                        <button type="button" class="btn btn-default" ng-click="changeBtnGroupStatus(btnGroupConstRef[0])">
+                            <span ng-show="btnGroupStatus == 0" class="glyphicon glyphicon-arrow-down"></span>&nbsp;<span ng-bind="btnGroupConstRef[0]"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" ng-click="changeBtnGroupStatus(btnGroupConstRef[1])">
+                            <span ng-show="btnGroupStatus == 1" class="glyphicon glyphicon-arrow-down"></span>&nbsp;<span ng-bind="btnGroupConstRef[1]"></span>
+                        </button>
+                    </div>--%>
+                    <div>
+                        <form class="navbar-form navbar-right" role="search"  onsubmit="return ;">
+                            <%--<div class="btn-group">
+                                <button type="button" class="btn btn-default"><span ng-bind="scenicSortConst"></span></button>
+                                <button type="button" class="btn btn-default dropdown-toggle"
+                                        data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">切换下拉菜单</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">全部</a></li>
+                                    &lt;%&ndash;<li class="divider"></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按价格从低到高</a></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按价格从高到低</a></li>&ndash;%&gt;
+                                    &lt;%&ndash;<li class="divider"></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按时间由近及远</a></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按时间由远及近</a></li>&ndash;%&gt;
+                                    <li class="divider"></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)" >按评分从低到高</a></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按评分从高到低</a></li>
+                                </ul>
+                            </div>--%>
+                            <%--<div class="form-group">
+                                <input type="text" class="form-control" placeholder="请输入公告名" ng-model="blurPlayGroundName">
+                            </div>
+                            <button type="button" class="btn btn-default" ng-click="getUserPageList()">
+                                <span class="glyphicon glyphicon-search"></span>&nbsp;<span>搜索</span>
+                            </button>--%>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </caption>
+        <%--新增场地面板--%>
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">场地信息填写</h3>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">场地名称</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="username" ng-model="add_playgroundName" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">大小</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="email" ng-model="add_size" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">价格(元)</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="tel" ng-model="add_price" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">位置</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="add_position">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">描述</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="add_description">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label"></label>
+                        <div class="col-sm-6">
+                            <button ng-disabled="add_playgroundName == '' || add_size == '' || add_price == '' ||
+                            add_position == '' || add_description == ''"
+                                    type="button" class="btn btn-success" ng-click="addToPlayground()" data-dismiss="modal">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,247 @@
+
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<script src="jsp/movie/js/movieManage.js"></script>
+<%--电影管理--%>
+<div ng-controller="movieManagecontroller">
+    <div class="col-xs-10" style="background-color: #f7f7f7;" id="">
+        <caption>
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand">电影列表</a>
+                        <div class="navbar-form navbar-left">
+                            <%--<button type="button" class="btn btn-primary" ng-click="addOneEquipmentModal()">
+                                <span class="glyphicon glyphicon-plus"></span>&nbsp;<span>新增设施</span>
+                            </button>--%>
+                        </div>
+
+                    </div>
+                    <div>
+                        <form class="navbar-form navbar-right" role="search"  onsubmit="return ;">
+                            <%--<div class="btn-group">
+                                <button type="button" class="btn btn-default"><span ng-bind="scenicSortConst"></span></button>
+                                <button type="button" class="btn btn-default dropdown-toggle"
+                                        data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">切换下拉菜单</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">全部</a></li>
+                                    &lt;%&ndash;<li class="divider"></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按价格从低到高</a></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按价格从高到低</a></li>&ndash;%&gt;
+                                    &lt;%&ndash;<li class="divider"></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按时间由近及远</a></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按时间由远及近</a></li>&ndash;%&gt;
+                                    <li class="divider"></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)" >按评分从低到高</a></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按评分从高到低</a></li>
+                                </ul>
+                            </div>--%>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="请输入电影名" ng-model="blurName">
+                            </div>
+                            <button type="button" class="btn btn-default" ng-click="getMoviePageList()">
+                                <span class="glyphicon glyphicon-search"></span>&nbsp;<span>搜索</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </caption>
+        <%--电影列表表格--%>
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr><th>海报</th><th>电影名称</th><th>导演</th><th>主演</th><th>评分</th><th> 情节</th><th>首映时间</th></tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in movieList">
+            	<td ><img width="100px" height="100px" ng-src="{{item.url}}" alt=""></td>
+                <td ng-bind="item.name"></td>
+                <td ng-bind="item.director"></td>
+                <td ng-bind="item.actor"></td>
+                <td ng-bind="item.score"></td>
+                <td ng-bind="item.plot"></td>
+                <td ng-bind="item.premiere"></td>
+                <td>
+                    <button ng-click="editOneMovieModal(item)" type="button" class="btn btn-success btn-sm">
+                        <span class="glyphicon glyphicon-edit"></span>&nbsp;<span>编辑</span></button>
+                    <button ng-click="deleteOneMovieModal(item)" type="button" class="btn btn-danger btn-sm">
+                        <span class="glyphicon glyphicon-remove"></span>&nbsp;<span>删除</span></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-bottom: 20px;"><!--分页bar ng-if则不能给button设置disabled因为ng-if不满足条件不会生成相应dom元素-->
+            <span>
+                <input ng-disabled="currentPage == 1" type="button" ng-click="makePagingList(prevPage)" class="btn btn-default" value={{prevPage}} />&nbsp;
+                <input type="text" disabled style="text-align:center;width:50px;" ng-model="currentPage" />&nbsp;
+                <input ng-disabled="currentPage == totalPage" type="button" ng-click="makePagingList(nextPage)"  class="btn btn-default" value="{{nextPage}}" />&nbsp;
+                <span>共&nbsp;</span>
+                <input type="text" readonly="readonly" style="text-align:center;width:50px;border:none;" ng-model="totalPage" />
+                <span>&nbsp;页</span>
+            </span>
+        </div>
+    </div>
+
+    <%--设施管理模态框部分--%>
+    <%--<!-- 新增设施 模态弹出框 -->
+    <div class="modal fade" id="modalid-eqmng-add">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <!--  >模态弹出窗标题<  -->
+                    <h4 class="modal-title">新增设施</h4>
+                </div>
+                <div class="modal-body">
+                    <!--  >模态弹出窗主体内容<  -->
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-offset-2 control-label">设施名称</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="username" ng-model="add_equipmentName" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-offset-2 control-label">价格(元)</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="tel" ng-model="add_price" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-offset-2 control-label">描述</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" ng-model="add_description">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-offset-2 control-label">总量</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" ng-model="add_totalNum">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button ng-disabled="add_equipmentName == '' || add_price == '' ||
+                            add_description == '' || add_totalNum == ''"
+                            type="button" class="btn btn-success" ng-click="addOneEquipment()" data-dismiss="modal">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->--%>
+
+    <!-- 删除确认 模态弹出框-->
+    <div class="modal fade" id="modalid-mvmng-delete">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">提示信息</h4>
+                </div>
+                <div class="modal-body">
+                    <p>确认要删除吗?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="deleteOneMovie()">确定</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- 编辑电影  模态弹出框 -->
+    <div class="modal fade" id="modalid-mvmng-edit">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <!--  >模态弹出窗标题<  -->
+                    <h4 class="modal-title">编辑电影</h4>
+                </div>
+                <div class="modal-body">
+                    <!--  >模态弹出窗主体内容<  -->
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-offset-2 control-label">电影名称</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="name" ng-model="editMovieList[0].name" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-offset-2 control-label">导演</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="director" ng-model="editMovieList[0].director" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-offset-2 control-label">主演</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" ng-model="editMovieList[0].actor">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-offset-2 control-label">评分</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" ng-model="editMovieList[0].score">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-offset-2 control-label">情节</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" ng-model="editMovieList[0].plot">
+                            </div>
+                        </div>
+                     <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">首映时间</label>
+                        <div class="col-sm-6">
+                                <div class="input-append date" id="datetimepicker" data-date="2017-4-15" data-date-format="yyyy-mm-dd hh:ii">
+                                    <input class="span2 form-control" size="16" type="text" placeholder="点击选择">
+                                    <span class="add-on"><i class="icon-remove"></i></span>
+                                    <span class="add-on"><i class="icon-th"></i></span>
+                                </div>
+                        </div>
+                        <script>
+                            $('#datetimepicker').datetimepicker()
+                                    .on('changeDate',function(ev){
+                                        console.log(ev.date.valueOf());
+                                        $('#datetimepicker').datetimepicker('hide');
+                                        /*var datestr = new Date(parseInt(ev.date.valueOf()));
+                                         var temstr = datestr.getFullYear() + "年" + (parseInt(datestr.getMonth())+1) + "月" + datestr.getDate() + "日"
+                                         + datestr.getHours() + ":" + datestr.getMinutes() + ":" + datestr.getSeconds()
+                                         ;*/
+                                        dateChooseArray[0] = new Date(parseInt(ev.date.valueOf()));
+                                    });
+                        </script>
+                    </div>
+                    </form>
+                    <label class="col-sm-2 col-sm-offset-2 control-label">上传图片:</label>
+                    <div  class="form-group" style="width:65% ,align:center">
+                     <div class="col-sm-6">
+                     
+                            <form id= "uploadForm">
+                                 <input class="form-control" onchange="showPreview(this)" type="file" name="file"/>
+                                &nbsp;<input type="button" class="btn btn-success" value="上传" ng-click="doUpload()" />
+                            </form>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="ifshowpic" style="align:ceter">
+                           <label class="col-sm-2 col-sm-offset-2 control-label">图片预览：</label>
+                            <div class="col-sm-6">
+                            <img width="300px" title="<%= request.getSession().getServletContext().getRealPath("/")%>" id="imgid-picPreview" height="300px" src="" alt="goods img">
+                    		</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-disabled="editMovieList[0].name == '' || editMovieList[0].director == '' || editMovieList[0].actor == '' ||
+                            editMovieList[0].score < 0 || editMovieList[0].score > 10 ||editMovieList[0].plot == '' || editMovieList[0].premiere == '' "
+                            type="button" class="btn btn-success" ng-click="editOneMovie()" data-dismiss="modal">提交</button>
+                </div>
+                
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</div>

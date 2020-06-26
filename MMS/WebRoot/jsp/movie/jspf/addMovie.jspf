@@ -1,0 +1,252 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<script>
+    var addMovieCtrl = m.controller("addMoviecontroller", function ($rootScope, $scope) {
+
+        $rootScope.am_init = function () {
+            $scope.add_name = "";
+            $scope.add_director = "";
+            $scope.add_actor = "";
+            $scope.add_score = "";
+            $scope.add_plot = "";
+            $scope.add_premiere = "";
+        };
+        /**
+         * 上传图片
+         * @type {boolean}
+         */
+        $scope.ifshowpic = false;
+        $scope.doUpload = function () {
+            /*var formData = new FormData($("#uploadForm")[0]);
+            console.log(formData);
+            var i = formData.entries();
+             console.log(i.next()); // {done:false, value:["k1", "v1"]}
+             console.log(i.next()); // {done:false, value:["k1", "v1"]}*/
+            var fileObj = document.getElementById("FileUpload").files[0]; // js 获取文件对象
+            if (typeof (fileObj) == "undefined" || fileObj.size <= 0) {
+                alert("请选择图片");
+                return;
+            }
+            var formFile = new FormData();
+            formFile.append("action", "UploadVMKImagePath");
+            formFile.append("file", fileObj); //加入文件对象
+
+            var data = formFile;
+            $.ajax({
+             url: '/movie/addOneMovie_pic' ,
+             type: 'POST',
+             data: data,
+             dataType: "json",
+             async: true,
+             cache: false,
+             contentType: false,
+             processData: false,
+             success: function (returndata) {
+             //console.log(returndata);
+             //console.log(pathshowpic);
+             //$("#imgid-picPreview").attr("src",pathshowpic);
+             $scope.$apply(function () {
+                 $scope.addMovie_picture = pathshowpic;
+                 console.log($scope.addMovie_picture);
+                 console.log($("#imgid-picPreview").attr("src"));
+                 $scope.ifshowpic = true;
+             });
+
+             },
+             error: function (returndata) {
+             console.log(returndata);
+             $scope.ifshowpic = false;
+             }
+             });
+        };
+
+
+        $scope.addOneMovie = function () {
+            $.ajax({
+                type: "POST",
+                url: "/movie/addToMovie",
+                data: {
+
+                    "name": $scope.add_name,
+                    "director": $scope.add_director,
+                    "actor": $scope.add_actor,
+                    "score": $scope.add_score,
+                    "plot": $scope.add_plot,
+                    "premiere": dateChooseArray[0],
+                    "url": $scope.addMovie_picture
+                },
+                contentType: "application/x-www-form-urlencoded",
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    $scope.$apply(function () {
+                        $rootScope.justForModalInfomation = "新增电影成功!";
+                        $("#modalid-toastInfo").modal("toggle");
+                    });
+                }
+            });
+        };
+
+    });
+    var pathshowpic = "";
+
+    var showPreview = function (obj) {
+        pathshowpic = //$("#imgid-picPreview").attr("title") +
+            "/movie-imgs/" +
+            obj.value.substring(obj.value.lastIndexOf("\\") + 1);
+        //console.log(pathshowpic);
+        //console.log($("#imgid-picPreview").attr("title"));
+    };
+    var dateChooseArray = new Array();
+</script>
+<%--新增电影--%>
+<div ng-controller="addMoviecontroller">
+    <div class="col-xs-10" style="background-color: #f7f7f7;" id="">
+        <caption>
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand">新增电影</a>
+                        <%--<div class="navbar-form navbar-left">
+                            <button type="button" class="btn btn-primary" ng-click="addOneBulletinModal()">
+                                <span class="glyphicon glyphicon-plus"></span>&nbsp;<span>新增设施</span>
+                            </button>
+                        </div>--%>
+                    </div>
+                    <%--<div class="btn-group navbar-form navbar-right">
+                        <button type="button" class="btn btn-default" ng-click="changeBtnGroupStatus(btnGroupConstRef[0])">
+                            <span ng-show="btnGroupStatus == 0" class="glyphicon glyphicon-arrow-down"></span>&nbsp;<span ng-bind="btnGroupConstRef[0]"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" ng-click="changeBtnGroupStatus(btnGroupConstRef[1])">
+                            <span ng-show="btnGroupStatus == 1" class="glyphicon glyphicon-arrow-down"></span>&nbsp;<span ng-bind="btnGroupConstRef[1]"></span>
+                        </button>
+                    </div>--%>
+                    <div>
+                        <form class="navbar-form navbar-right" role="search" onsubmit="return ;">
+                            <%--<div class="btn-group">
+                                <button type="button" class="btn btn-default"><span ng-bind="scenicSortConst"></span></button>
+                                <button type="button" class="btn btn-default dropdown-toggle"
+                                        data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">切换下拉菜单</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">全部</a></li>
+                                    &lt;%&ndash;<li class="divider"></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按价格从低到高</a></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按价格从高到低</a></li>&ndash;%&gt;
+                                    &lt;%&ndash;<li class="divider"></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按时间由近及远</a></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按时间由远及近</a></li>&ndash;%&gt;
+                                    <li class="divider"></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)" >按评分从低到高</a></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按评分从高到低</a></li>
+                                </ul>
+                            </div>--%>
+                            <%--<div class="form-group">
+                                <input type="text" class="form-control" placeholder="请输入公告名" ng-model="blurPlayGroundName">
+                            </div>
+                            <button type="button" class="btn btn-default" ng-click="getUserPageList()">
+                                <span class="glyphicon glyphicon-search"></span>&nbsp;<span>搜索</span>
+                            </button>--%>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </caption>
+        <%--新增电影面板--%>
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">电影信息填写</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">电影名称</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="name" ng-model="add_name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">导演</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="director" ng-model="add_director">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">主演</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="add_actor">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">评分（参考）</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="add_score">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">情节</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="add_plot">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">首映时间</label>
+                        <div class="col-sm-6">
+                            <div class="input-append date" id="datetimepicker_" data-date="2017-4-15"
+                                 data-date-format="yyyy-mm-dd hh:ii">
+                                <input class="span2 form-control" size="16" type="text" placeholder="点击选择"
+                                       ng-model="add_premiere">
+                                <span class="add-on"><i class="icon-remove"></i></span>
+                                <span class="add-on"><i class="icon-th"></i></span>
+                            </div>
+                        </div>
+                        <script>
+                            $('#datetimepicker_').datetimepicker()
+                                .on('changeDate', function (ev) {
+                                    console.log(ev.date.valueOf());
+                                    $('#datetimepicker').datetimepicker('hide');
+                                    /*var datestr = new Date(parseInt(ev.date.valueOf()));
+                                     var temstr = datestr.getFullYear() + "年" + (parseInt(datestr.getMonth())+1) + "月" + datestr.getDate() + "日"
+                                     + datestr.getHours() + ":" + datestr.getMinutes() + ":" + datestr.getSeconds()
+                                     ;*/
+                                    dateChooseArray[0] = new Date(parseInt(ev.date.valueOf()));
+
+                                });
+                        </script>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label"></label>
+                        <div class="col-sm-6">
+                            <button ng-disabled="add_name == '' || add_director == '' ||
+                            add_actor == '' || add_score == ''|| add_plot == ''|| add_premiere == ''"
+                                    type="button" class="btn btn-success" ng-click="addOneMovie()" data-dismiss="modal">
+                                提交
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <label class="col-sm-2 col-sm-offset-2 control-label">上传图片:</label>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <form id="uploadForm">
+                            <input class="form-control" id="FileUpload" onchange="showPreview(this)" type="file" name="file"/>
+                            &nbsp;<input type="button" class="btn btn-success" value="上传" ng-click="doUpload()"/>
+                        </form>
+                    </div>
+                </div>
+                <div class="form-group" ng-show="ifshowpic" style="align:ceter">
+                    <label class="col-sm-2 col-sm-offset-2 control-label">图片预览：</label>
+                    <div class="col-sm-6">
+                        <img width="300px" title="<%= request.getSession().getServletContext().getRealPath("/")%>"
+                             id="imgid-picPreview" height="300px" ng-src="{{addMovie_picture}}" alt="img">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

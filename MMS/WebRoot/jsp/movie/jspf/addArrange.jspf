@@ -1,0 +1,179 @@
+
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<script>
+    var addArrangeCtrl = m.controller("addArrangecontroller",function ($rootScope,$scope) {
+       
+        $rootScope.aa_init = function () {
+            $scope.add_movie_id = "";
+            $scope.add_hall_id = "";
+            $scope.add_price = "";
+            $scope.add_startTime = "";
+            $scope.add_endTime = "";
+        };
+
+        $scope.addOneArrange = function(){
+            $.ajax({
+                type: "POST",
+                url: "/arrange/addOneArrange",
+                data: {
+                    "movieName": $scope.add_movieName,
+                    "hall_id": $scope.add_hall_id,
+                    "price": $scope.add_price,
+                    "startTime": dateChooseArray[0],
+                    "endTime": dateChooseArray[1]
+                },
+                contentType: "application/x-www-form-urlencoded",
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    $scope.$apply(function(){
+                        $rootScope.justForModalInfomation = "新增排片成功!";
+                        $("#modalid-toastInfo").modal("toggle");
+                    });
+                }
+            });
+        };
+
+    });
+    var dateChooseArray = new Array();
+</script>
+<%--新增排片--%>
+<div ng-controller="addArrangecontroller">
+    <div class="col-xs-10" style="background-color: #f7f7f7;" id="">
+        <caption>
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand">新增排片</a>
+                        <%--<div class="navbar-form navbar-left">
+                            <button type="button" class="btn btn-primary" ng-click="addOneBulletinModal()">
+                                <span class="glyphicon glyphicon-plus"></span>&nbsp;<span>新增设施</span>
+                            </button>
+                        </div>--%>
+                    </div>
+                    <%--<div class="btn-group navbar-form navbar-right">
+                        <button type="button" class="btn btn-default" ng-click="changeBtnGroupStatus(btnGroupConstRef[0])">
+                            <span ng-show="btnGroupStatus == 0" class="glyphicon glyphicon-arrow-down"></span>&nbsp;<span ng-bind="btnGroupConstRef[0]"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" ng-click="changeBtnGroupStatus(btnGroupConstRef[1])">
+                            <span ng-show="btnGroupStatus == 1" class="glyphicon glyphicon-arrow-down"></span>&nbsp;<span ng-bind="btnGroupConstRef[1]"></span>
+                        </button>
+                    </div>--%>
+                    <div>
+                        <form class="navbar-form navbar-right" role="search"  onsubmit="return ;">
+                            <%--<div class="btn-group">
+                                <button type="button" class="btn btn-default"><span ng-bind="scenicSortConst"></span></button>
+                                <button type="button" class="btn btn-default dropdown-toggle"
+                                        data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">切换下拉菜单</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">全部</a></li>
+                                    &lt;%&ndash;<li class="divider"></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按价格从低到高</a></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按价格从高到低</a></li>&ndash;%&gt;
+                                    &lt;%&ndash;<li class="divider"></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按时间由近及远</a></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按时间由远及近</a></li>&ndash;%&gt;
+                                    <li class="divider"></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)" >按评分从低到高</a></li>
+                                    <li><a style="cursor: pointer;" ng-click="scenicSortConstFunc($event)">按评分从高到低</a></li>
+                                </ul>
+                            </div>--%>
+                            <%--<div class="form-group">
+                                <input type="text" class="form-control" placeholder="请输入公告名" ng-model="blurPlayGroundName">
+                            </div>
+                            <button type="button" class="btn btn-default" ng-click="getUserPageList()">
+                                <span class="glyphicon glyphicon-search"></span>&nbsp;<span>搜索</span>
+                            </button>--%>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </caption>
+        <%--新增排片面板--%>
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">排片信息填写</h3>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">电影名称</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="add_movieName" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">影厅号</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="add_hall_id" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">价格</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" ng-model="add_price" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">开始时间</label>
+                        <div class="col-sm-6">
+                                <div class="input-append date" id="datetimepicker_3" data-date="2017-4-15" data-date-format="yyyy-mm-dd hh:ii">
+                                    <input class="span2 form-control" size="16" type="text" placeholder="点击选择" ng-model="add_startTime">
+                                    <span class="add-on"><i class="icon-remove"></i></span>
+                                    <span class="add-on"><i class="icon-th"></i></span>
+                                </div>
+                        </div>
+                        <script>
+                            $('#datetimepicker_3').datetimepicker()
+                                    .on('changeDate',function(ev){
+                                        console.log(ev.date.valueOf());
+                                        $('#datetimepicker_3').datetimepicker('hide');
+                                        /*var datestr = new Date(parseInt(ev.date.valueOf()));
+                                         var temstr = datestr.getFullYear() + "年" + (parseInt(datestr.getMonth())+1) + "月" + datestr.getDate() + "日"
+                                         + datestr.getHours() + ":" + datestr.getMinutes() + ":" + datestr.getSeconds()
+                                         ;*/
+                                        dateChooseArray[0] = new Date(parseInt(ev.date.valueOf()));
+                                   		
+                                    });
+                        </script>
+                    </div>
+					<div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label">结束时间</label>
+                        <div class="col-sm-6">
+                                <div class="input-append date" id="datetimepicker_4" data-date="2017-4-15" data-date-format="yyyy-mm-dd hh:ii">
+                                    <input class="span2 form-control" size="16" type="text" placeholder="点击选择" ng-model="add_endTime">
+                                    <span class="add-on"><i class="icon-remove"></i></span>
+                                    <span class="add-on"><i class="icon-th"></i></span>
+                                </div>
+                        </div>
+                        <script>
+                            $('#datetimepicker_4').datetimepicker()
+                                    .on('changeDate',function(ev){
+                                        console.log(ev.date.valueOf());
+                                        $('#datetimepicker_4').datetimepicker('hide');
+                                        /*var datestr = new Date(parseInt(ev.date.valueOf()));
+                                         var temstr = datestr.getFullYear() + "年" + (parseInt(datestr.getMonth())+1) + "月" + datestr.getDate() + "日"
+                                         + datestr.getHours() + ":" + datestr.getMinutes() + ":" + datestr.getSeconds()
+                                         ;*/
+                                        dateChooseArray[1] = new Date(parseInt(ev.date.valueOf()));
+                                   		
+                                    });
+                        </script>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-2 control-label"></label>
+                        <div class="col-sm-6">
+                            <button ng-disabled="add_movieName == '' || add_hall_id == '' ||
+                            add_price == '' || add_startTime == '' || add_endTime == ''"
+                                    type="button" class="btn btn-success" ng-click="addOneArrange()" data-dismiss="modal">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
